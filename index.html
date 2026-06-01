@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Easy Prep - Meal Prep Planer für kleines Budget">
+    <title>Easy Prep - Meal Prep Planer</title>
+    <style>
+        /* ===== RESET & BASIS ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #4CAF50;
+            --primary-dark: #2E7D32;
+            --secondary: #2E7D32;
+            --background: #F7F9F7;
+            --accent: #FFC107;
+            --text-dark: #212121;
+            --text-light: #757575;
+            --border: #E0E0E0;
+            --success: #4CAF50;
+            --warning: #FF9800;
+            --error: #F44336;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background);
+            color: var(--text-dark);
+            line-height: 1.6;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.dark-mode {
+            --background: #1a1a1a;
+            --text-dark: #ffffff;
+            --text-light: #bbb;
+            --border: #333;
+        }
+
+        /* ===== HEADER ===== */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            flex: 1;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .dark-mode-toggle {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .dark-mode-toggle:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* ===== CONTAINER ===== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+
+        /* ===== CARDS ===== */
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: box-shadow 0.3s;
+        }
+
+        body.dark-mode .card {
+            background: #2a2a2a;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .card h2 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 0.5rem;
+        }
+
+        /* ===== INPUT SECTION ===== */
+        .input-section {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border);
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            background: white;
+            color: var(--text-dark);
+        }
+
+        body.dark-mode .form-group input,
+        body.dark-mode .form-group select {
+            background: #333;
+            color: white;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+        }
+
+        /* ===== SLIDER ===== */
+        .slider-container {
+            margin-bottom: 1rem;
+        }
+
+        .slider-container label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--border);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .slider-value {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        /* ===== BUTTONS ===== */
+        button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #FFA726;
+            transform: translateY(-2px);
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        /* ===== BUDGET OVERVIEW ===== */
+        .budget-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .budget-item {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .budget-item.warning {
+            background: linear-gradient(135deg, var(--warning) 0%, #E65100 100%);
+        }
+
+        .budget-item.success {
+            background: linear-gradient(135deg, var(--success) 0%, #1B5E20 100%);
+        }
+
+        .budget-item-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .budget-item-value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .budget-item-currency {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 0.3rem;
+        }
+
+        /* ===== PROGRESS BAR ===== */
+        .progress-container {
+            margin-bottom: 1rem;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            transition: width 0.3s ease;
+            border-radius: 6px;
+        }
+
+        /* ===== RECIPE SECTION ===== */
+        .recipes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .recipe-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        body.dark-mode .recipe-card {
+            background: #2a2a2a;
+        }
+
+        .recipe-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        }
+
+        .recipe-card.selected {
+            border-color: var(--primary);
+            background: rgba(76, 175, 80, 0.05);
+        }
+
+        .recipe-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1rem;
+        }
+
+        .recipe-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .recipe-category {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .recipe-body {
+            padding: 1rem;
+        }
+
+        .recipe-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .recipe-info-item {
+            background: var(--background);
+            padding: 0.5rem;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        body.dark-mode .recipe-info-item {
+            background: #333;
+        }
+
+        .recipe-info-label {
+            color: var(--text-light);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .recipe-info-value {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1rem;
+        }
+
+        .recipe-ingredients {
+            margin-bottom: 1rem;
+        }
+
+        .recipe-ingredients-label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .recipe-ingredients-list {
+            list-style: none;
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .recipe-ingredients-list li {
+            padding: 0.3rem 0;
+            padding-left: 1.2rem;
+            position: relative;
+        }
+
+        .recipe-ingredients-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .recipe-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .recipe-checkbox {
+            flex: 1;
+        }
+
+        .recipe-checkbox input[type="checkbox"] {
+            display: none;
+        }
+
+        .recipe-checkbox label {
+            display: block;
+            width: 100%;
+            padding: 0.5rem;
+            background: var(--primary);
+            color: white;
+            border-radius: 4px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .recipe-checkbox input[type="checkbox"]:checked + label {
+            background: var(--primary-dark);
+        }
+
+        .recipe-checkbox label:hover {
+            opacity: 0.9;
+        }
+
+        /* ===== SHOPPING LIST ===== */
+        .shopping-list {
+            list-style: none;
+        }
+
+        .shopping-list li {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .shopping-list li:last-child {
+            border-bottom: none;
+        }
+
+        .shopping-list input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .shopping-list label {
+            flex: 1;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .shopping-list input[type="checkbox"]:checked + label {
+            text-decoration: line-through;
+            color: var(--text-light);
+        }
+
+        /* ===== MEAL PLAN ===== */
+        .meal-plan-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .meal-category {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            min-height: 200px;
+        }
+
+        .meal-category h3 {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .meal-list {
+            list-style: none;
+        }
+
+        .meal-list li {
+            background: rgba(255,255,255,0.1);
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            border-radius: 4px;
+            backdrop-filter: blur(10px);
+            font-size: 0.9rem;
+        }
+
+        /* ===== EMPTY STATE ===== */
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-light);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* ===== ACTIONS BAR ===== */
+        .actions-bar {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            header h1 {
+                font-size: 1.5rem;
+            }
+
+            .input-section {
+                flex-direction: column;
+            }
+
+            .form-group {
+                min-width: 100%;
+            }
+
+            .budget-overview {
+                grid-template-columns: 1fr;
+            }
+
+            .recipes-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .meal-plan-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .recipe-info {
+                grid-template-columns: 1fr;
+            }
+
+            .actions-bar {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+
+        /* ===== PRINT STYLES ===== */
+        @media print {
+            header, .actions-bar, .btn-secondary, .input-section {
+                display: none;
+            }
+
+            body {
+                background: white;
+            }
+
+            .card {
+                page-break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .recipe-card {
+            animation: fadeIn 0.3s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <h1>🍽️ Easy Prep</h1>
+        <div class="header-controls">
+            <button class="dark-mode-toggle" id="darkModeToggle">🌙 Dark Mode</button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <div class="container">
+        <!-- INPUT SECTION -->
+        <div class="card">
+            <h2>📊 Budget & Planung</h2>
+            <div class="input-section">
+                <div class="form-group">
+                    <label for="budgetInput">Wöchentliches Budget</label>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <input type="number" id="budgetInput" placeholder="z.B. 50" min="10" max="500" value="50">
+                        <select id="currencySelect">
+                            <option value="CHF">CHF</option>
+                            <option value="EUR">EUR</option>
+                            <option value="USD">USD</option>
+                            <option value="GBP">GBP</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="slider-container" style="flex: 1; min-width: 250px;">
+                    <label for="budgetSlider">Oder Slider verwenden:</label>
+                    <input type="range" id="budgetSlider" min="10" max="500" value="50" step="5">
+                    <div style="margin-top: 0.5rem;">
+                        <span class="slider-value" id="sliderValue">50</span>
+                        <span id="currencyDisplay">CHF</span>
+                    </div>
+                </div>
+                <button class="btn-primary" id="planBtn" style="height: fit-content;">Plan erstellen</button>
+            </div>
+        </div>
+
+        <!-- BUDGET OVERVIEW -->
+        <div id="budgetOverview" class="budget-overview" style="display: none;">
+            <div class="budget-item">
+                <div class="budget-item-label">Verfügbares Budget</div>
+                <div class="budget-item-value" id="totalBudgetDisplay">0</div>
+                <div class="budget-item-currency" id="totalCurrencyDisplay">CHF</div>
+            </div>
+            <div class="budget-item warning">
+                <div class="budget-item-label">Verplante Kosten</div>
+                <div class="budget-item-value" id="spentDisplay">0</div>
+                <div class="budget-item-currency" id="spentCurrencyDisplay">CHF</div>
+            </div>
+            <div class="budget-item success">
+                <div class="budget-item-label">Restbudget</div>
+                <div class="budget-item-value" id="remainingDisplay">0</div>
+                <div class="budget-item-currency" id="remainingCurrencyDisplay">CHF</div>
+            </div>
+        </div>
+
+        <!-- PROGRESS BAR -->
+        <div class="card" id="progressCard" style="display: none;">
+            <div class="progress-container">
+                <div class="progress-label">
+                    <span>Budget-Auslastung</span>
+                    <span id="progressPercent">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RECIPE SELECTION -->
+        <div class="card" id="recipeCard" style="display: none;">
+            <h2>🥗 Verfügbare Rezepte</h2>
+            <p style="margin-bottom: 1rem; color: var(--text-light);">Wähle Rezepte aus, die dir gefallen. Die App wählt automatisch Rezepte, um dein Budget optimal zu nutzen.</p>
+            <div class="recipes-grid" id="recipesGrid"></div>
+        </div>
+
+        <!-- MEAL PLAN -->
+        <div class="card" id="mealPlanCard" style="display: none;">
+            <h2>📅 Wochenplan</h2>
+            <div class="meal-plan-grid" id="mealPlanGrid"></div>
+        </div>
+
+        <!-- SHOPPING LIST -->
+        <div class="card" id="shoppingCard" style="display: none;">
+            <h2>🛒 Einkaufsliste</h2>
+            <div class="actions-bar">
+                <button class="btn-secondary btn-small" id="printBtn">🖨️ Drucken</button>
+                <button class="btn-secondary btn-small" id="copyBtn">📋 Kopieren</button>
+                <button class="btn-secondary btn-small" id="clearCheckboxes">✓ Alle abhaken</button>
+            </div>
+            <ul class="shopping-list" id="shoppingList"></ul>
+        </div>
+    </div>
+
+    <script>
+        // ===== RECIPE DATABASE =====
+        const recipes = [
+            {
+                id: 1,
+                name: 'Overnight Oats mit Beeren',
+                category: 'Frühstück',
+                cost: 1.50,
+                portions: 2,
+                calories: 280,
+                time: 10,
+                ingredients: ['Haferflocken', 'Joghurt', 'Milch', 'Beeren', 'Honig']
+            },
+            {
+                id: 2,
+                name: 'Rührei mit Toast',
+                category: 'Frühstück',
+                cost: 1.20,
+                portions: 2,
+                calories: 320,
+                time: 15,
+                ingredients: ['Eier', 'Butter', 'Brot', 'Salz', 'Pfeffer']
+            },
+            {
+                id: 3,
+                name: 'Reis mit Gemüse & Hähnchen',
+                category: 'Mittagessen',
+                cost: 3.50,
+                portions: 3,
+                calories: 450,
+                time: 30,
+                ingredients: ['Reis', 'Hähnchenbrust', 'Brokkoli', 'Karotten', 'Sojasauce']
+            },
+            {
+                id: 4,
+                name: 'Pasta mit Tomatensauce',
+                category: 'Mittagessen',
+                cost: 2.80,
+                portions: 3,
+                calories: 420,
+                time: 25,
+                ingredients: ['Pasta', 'Tomaten (Dose)', 'Zwiebel', 'Knoblauch', 'Olivenöl', 'Parmesan']
+            },
+            {
+                id: 5,
+                name: 'Chili con Carne',
+                category: 'Mittagessen',
+                cost: 4.20,
+                portions: 4,
+                calories: 480,
+                time: 35,
+                ingredients: ['Hackfleisch', 'Bohnen (Dose)', 'Tomaten (Dose)', 'Zwiebel', 'Paprika', 'Knoblauch']
+            },
+            {
+                id: 6,
+                name: 'Couscous-Salat mit Gemüse',
+                category: 'Mittagessen',
+                cost: 2.90,
+                portions: 3,
+                calories: 380,
+                time: 20,
+                ingredients: ['Couscous', 'Gurke', 'Tomate', 'Paprika', 'Petersilie', 'Zitrone']
+            },
+            {
+                id: 7,
+                name: 'Hähnchen-Wraps',
+                category: 'Mittagessen',
+                cost: 3.80,
+                portions: 3,
+                calories: 420,
+                time: 25,
+                ingredients: ['Tortillas', 'Hähnchenbrust', 'Salat', 'Tomate', 'Sauce']
+            },
+            {
+                id: 8,
+                name: 'Kartoffelpfanne mit Gemüse',
+                category: 'Abendessen',
+                cost: 2.40,
+                portions: 3,
+                calories: 380,
+                time: 28,
+                ingredients: ['Kartoffeln', 'Zwiebel', 'Brokkoli', 'Knoblauch', 'Olivenöl']
+            },
+            {
+                id: 9,
+                name: 'Gemüsesuppe (Eintopf)',
+                category: 'Abendessen',
+                cost: 1.80,
+                portions: 4,
+                calories: 220,
+                time: 40,
+                ingredients: ['Kartoffeln', 'Karotten', 'Sellerie', 'Zwiebel', 'Gemüsebrühe']
+            },
+            {
+                id: 10,
+                name: 'Linsen-Curry mit Reis',
+                category: 'Abendessen',
+                cost: 3.20,
+                portions: 3,
+                calories: 410,
+                time: 30,
+                ingredients: ['Linsen', 'Kokosmilch', 'Reis', 'Zwiebel', 'Curry-Pulver', 'Knoblauch']
+            },
+            {
+                id: 11,
+                name: 'Ei-Fried Rice',
+                category: 'Abendessen',
+                cost: 2.60,
+                portions: 3,
+                calories: 390,
+                time: 20,
+                ingredients: ['Reis (gekocht)', 'Eier', 'Erbsen', 'Karotten', 'Frühlingszwiebel', 'Sojasauce']
+            },
+            {
+                id: 12,
+                name: 'Falafel mit Hummus',
+                category: 'Snacks',
+                cost: 2.50,
+                portions: 4,
+                calories: 280,
+                time: 30,
+                ingredients: ['Kichererbsen', 'Zwiebel', 'Petersilie', 'Knoblauch', 'Mehl']
+            },
+            {
+                id: 13,
+                name: 'Müsliriegel (selbstgemacht)',
+                category: 'Snacks',
+                cost: 1.90,
+                portions: 8,
+                calories: 180,
+                time: 25,
+                ingredients: ['Haferflocken', 'Honig', 'Butter', 'Nüsse', 'Rosinen']
+            },
+            {
+                id: 14,
+                name: 'Gemüse-Sticks mit Dip',
+                category: 'Snacks',
+                cost: 1.50,
+                portions: 3,
+                calories: 120,
+                time: 10,
+                ingredients: ['Karotten', 'Gurke', 'Paprika', 'Hummus']
+            },
+            {
+                id: 15,
+                name: 'Popcorn (selbstgemacht)',
+                category: 'Snacks',
+                cost: 0.80,
+                portions: 2,
+                calories: 150,
+                time: 10,
+                ingredients: ['Popcorn-Körner', 'Butter', 'Salz']
+            },
+            {
+                id: 16,
+                name: 'Spinat-Gnocchi',
+                category: 'Abendessen',
+                cost: 3.50,
+                portions: 3,
+                calories: 400,
+                time: 35,
+                ingredients: ['Gnocchi', 'Spinat', 'Knoblauch', 'Olivenöl', 'Parmesan']
+            }
+        ];
+
+        // ===== STATE =====
+        let appState = {
+            budget: 50,
+            currency: 'CHF',
+            selectedRecipes: [],
+            shoppingItems: new Set(),
+            darkMode: localStorage.getItem('darkMode') === 'true'
+        };
+
+        // ===== DARK MODE =====
+        function initDarkMode() {
+            if (appState.darkMode) {
+                document.body.classList.add('dark-mode');
+                document.getElementById('darkModeToggle').textContent = '☀️ Light Mode';
+            }
+        }
+
+        document.getElementById('darkModeToggle').addEventListener('click', () => {
+            appState.darkMode = !appState.darkMode;
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', appState.darkMode);
+            document.getElementById('darkModeToggle').textContent = appState.darkMode ? '☀️ Light Mode' : '🌙 Dark Mode';
+        });
+
+        // ===== BUDGET & CURRENCY =====
+        document.getElementById('budgetInput').addEventListener('change', (e) => {
+            appState.budget = parseInt(e.target.value) || 50;
+            document.getElementById('budgetSlider').value = appState.budget;
+            document.getElementById('sliderValue').textContent = appState.budget;
+        });
+
+        document.getElementById('budgetSlider').addEventListener('input', (e) => {
+            appState.budget = parseInt(e.target.value);
+            document.getElementById('budgetInput').value = appState.budget;
+            document.getElementById('sliderValue').textContent = appState.budget;
+        });
+
+        document.getElementById('currencySelect').addEventListener('change', (e) => {
+            appState.currency = e.target.value;
+            document.getElementById('currencyDisplay').textContent = appState.currency;
+        });
+
+        // ===== PLAN ERSTELLEN =====
+        document.getElementById('planBtn').addEventListener('click', generatePlan);
+
+        function generatePlan() {
+            // Reset
+            appState.selectedRecipes = [];
+            appState.shoppingItems = new Set();
+
+            // Auto-select recipes to fill budget
+            const sortedRecipes = [...recipes].sort((a, b) => a.cost - b.cost);
+            let totalCost = 0;
+
+            for (const recipe of sortedRecipes) {
+                if (totalCost + recipe.cost <= appState.budget) {
+                    appState.selectedRecipes.push(recipe.id);
+                    totalCost += recipe.cost;
+                }
+            }
+
+            // Show sections
+            document.getElementById('budgetOverview').style.display = 'grid';
+            document.getElementById('progressCard').style.display = 'block';
+            document.getElementById('recipeCard').style.display = 'block';
+            document.getElementById('mealPlanCard').style.display = 'block';
+            document.getElementById('shoppingCard').style.display = 'block';
+
+            updateDisplay();
+        }
+
+        // ===== RECIPE SELECTION =====
+        function renderRecipes() {
+            const grid = document.getElementById('recipesGrid');
+            grid.innerHTML = '';
+
+            const selectedRecipeObjects = recipes.filter(r => appState.selectedRecipes.includes(r.id));
+
+            selectedRecipeObjects.forEach(recipe => {
+                const card = document.createElement('div');
+                card.className = 'recipe-card';
+                if (appState.selectedRecipes.includes(recipe.id)) {
+                    card.classList.add('selected');
+                }
+
+                card.innerHTML = `
+                    <div class="recipe-header">
+                        <div class="recipe-title">${recipe.name}</div>
+                        <span class="recipe-category">${recipe.category}</span>
+                    </div>
+                    <div class="recipe-body">
+                        <div class="recipe-info">
+                            <div class="recipe-info-item">
+                                <div class="recipe-info-label">Kosten</div>
+                                <div class="recipe-info-value">${recipe.cost.toFixed(2)} ${appState.currency}</div>
+                            </div>
+                            <div class="recipe-info-item">
+                                <div class="recipe-info-label">Portionen</div>
+                                <div class="recipe-info-value">${recipe.portions}</div>
+                            </div>
+                            <div class="recipe-info-item">
+                                <div class="recipe-info-label">Kalorien</div>
+                                <div class="recipe-info-value">${recipe.calories}</div>
+                            </div>
+                            <div class="recipe-info-item">
+                                <div class="recipe-info-label">Zeit</div>
+                                <div class="recipe-info-value">${recipe.time} min</div>
+                            </div>
+                        </div>
+                        <div class="recipe-ingredients">
+                            <div class="recipe-ingredients-label">Zutaten:</div>
+                            <ul class="recipe-ingredients-list">
+                                ${recipe.ingredients.map(ing => `<li>${ing}</li>`).join('')}
+                            </ul>
+                        </div>
+                        <div class="recipe-actions">
+                            <div class="recipe-checkbox">
+                                <input type="checkbox" id="recipe-${recipe.id}" ${appState.selectedRecipes.includes(recipe.id) ? 'checked' : ''}>
+                                <label for="recipe-${recipe.id}">
+                                    ${appState.selectedRecipes.includes(recipe.id) ? '✓ Ausgewählt' : 'Auswählen'}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                card.addEventListener('click', () => {
+                    toggleRecipe(recipe.id, card);
+                });
+
+                grid.appendChild(card);
+            });
+        }
+
+        function toggleRecipe(recipeId, cardElement) {
+            if (appState.selectedRecipes.includes(recipeId)) {
+                appState.selectedRecipes = appState.selectedRecipes.filter(r => r !== recipeId);
+            } else {
+                const totalCost = getTotalCost();
+                const recipe = recipes.find(r => r.id === recipeId);
+                if (totalCost + recipe.cost <= appState.budget) {
+                    appState.selectedRecipes.push(recipeId);
+                }
+            }
+            updateDisplay();
+        }
+
+        // ===== CALCULATIONS =====
+        function getTotalCost() {
+            return recipes
+                .filter(r => appState.selectedRecipes.includes(r.id))
+                .reduce((sum, r) => sum + r.cost, 0);
+        }
+
+        function getRemaining() {
+            return appState.budget - getTotalCost();
+        }
+
+        // ===== UPDATE DISPLAY =====
+        function updateDisplay() {
+            updateBudgetOverview();
+            updateProgress();
+            renderRecipes();
+            updateMealPlan();
+            updateShoppingList();
+        }
+
+        function updateBudgetOverview() {
+            const total = getTotalCost();
+            const remaining = getRemaining();
+
+            document.getElementById('totalBudgetDisplay').textContent = appState.budget.toFixed(2);
+            document.getElementById('totalCurrencyDisplay').textContent = appState.currency;
+
+            document.getElementById('spentDisplay').textContent = total.toFixed(2);
+            document.getElementById('spentCurrencyDisplay').textContent = appState.currency;
+
+            document.getElementById('remainingDisplay').textContent = remaining.toFixed(2);
+            document.getElementById('remainingCurrencyDisplay').textContent = appState.currency;
+        }
+
+        function updateProgress() {
+            const percent = (getTotalCost() / appState.budget) * 100;
+            document.getElementById('progressFill').style.width = Math.min(percent, 100) + '%';
+            document.getElementById('progressPercent').textContent = Math.round(percent) + '%';
+        }
+
+        function updateMealPlan() {
+            const grid = document.getElementById('mealPlanGrid');
+            grid.innerHTML = '';
+
+            const categories = ['Frühstück', 'Mittagessen', 'Abendessen', 'Snacks'];
+            const selectedRecipeObjects = recipes.filter(r => appState.selectedRecipes.includes(r.id));
+
+            categories.forEach(category => {
+                const categoryRecipes = selectedRecipeObjects.filter(r => r.category === category);
+
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'meal-category';
+
+                let html = `<h3>${category}</h3><ul class="meal-list">`;
+
+                if (categoryRecipes.length === 0) {
+                    html += '<li>Keine Rezepte ausgewählt</li>';
+                } else {
+                    categoryRecipes.forEach(recipe => {
+                        html += `<li>✓ ${recipe.name}<br><small>${recipe.portions} Portionen | ${recipe.calories} kcal</small></li>`;
+                    });
+                }
+
+                html += '</ul>';
+                categoryDiv.innerHTML = html;
+                grid.appendChild(categoryDiv);
+            });
+        }
+
+        function updateShoppingList() {
+            appState.shoppingItems.clear();
+            const selectedRecipeObjects = recipes.filter(r => appState.selectedRecipes.includes(r.id));
+
+            selectedRecipeObjects.forEach(recipe => {
+                recipe.ingredients.forEach(ing => appState.shoppingItems.add(ing));
+            });
+
+            const list = document.getElementById('shoppingList');
+            list.innerHTML = '';
+
+            if (appState.shoppingItems.size === 0) {
+                list.innerHTML = '<li><div class="empty-state"><div class="empty-state-icon">🛒</div>Noch keine Zutaten ausgewählt</div></li>';
+                return;
+            }
+
+            Array.from(appState.shoppingItems).sort().forEach((item, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <input type="checkbox" id="item-${index}">
+                    <label for="item-${index}">${item}</label>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        // ===== SHOPPING LIST ACTIONS =====
+        document.getElementById('printBtn').addEventListener('click', () => {
+            window.print();
+        });
+
+        document.getElementById('copyBtn').addEventListener('click', () => {
+            const items = Array.from(appState.shoppingItems).sort().join('\n');
+            navigator.clipboard.writeText(items).then(() => {
+                alert('Einkaufsliste kopiert!');
+            });
+        });
+
+        document.getElementById('clearCheckboxes').addEventListener('click', () => {
+            document.querySelectorAll('#shoppingList input[type="checkbox"]').forEach(cb => {
+                cb.checked = !cb.checked;
+            });
+        });
+
+        // ===== INIT =====
+        initDarkMode();
+    </script>
+</body>
+</html>
